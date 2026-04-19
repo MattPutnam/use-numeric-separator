@@ -1,0 +1,53 @@
+{
+  "name": "use-numeric-separator",
+  "version": "0.1.0",
+  "description": "A typescript-eslint rule that enforces underscore numeric separators on long number literals (decimal, hex, binary, octal) with per-base configuration.",
+  "license": "MIT",
+  "keywords": [
+    "eslint",
+    "eslint-plugin",
+    "eslintplugin",
+    "typescript-eslint",
+    "numeric-separator",
+    "underscore",
+    "readability"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src tests",
+    "test": "node --import tsx --test tests/unit/*.test.ts tests/rules/*.test.ts",
+    "prepublishOnly": "npm run build && npm run lint && npm test"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "peerDependencies": {
+    "eslint": "^8.57.0 || ^9.0.0",
+    "typescript": ">=4.8.4 <6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@typescript-eslint/utils": "^8.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@typescript-eslint/rule-tester": "^8.0.0",
+    "eslint": "^9.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0",
+    "typescript-eslint": "^8.0.0"
+  }
+}
