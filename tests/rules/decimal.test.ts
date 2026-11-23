@@ -1,3 +1,4 @@
+import { localPlugin } from "../helpers/local-plugin";
 import { rule } from "../../src/rules/use-numeric-separator";
 import { makeRuleTester } from "./setup";
 
@@ -93,9 +94,8 @@ import { Linter } from "eslint";
 
 test("decimal BigInt fix never places separator adjacent to 'n'", () => {
   const linter = new Linter();
-  const plugin = { rules: { "use-numeric-separator": rule } };
   const result = linter.verifyAndFix("const x = 10000000000n;", {
-    plugins: { local: plugin },
+    plugins: { local: localPlugin },
     rules: { "local/use-numeric-separator": "error" },
   });
   assert.equal(result.output, "const x = 10_000_000_000n;");

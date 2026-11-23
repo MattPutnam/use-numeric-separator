@@ -1,13 +1,12 @@
+import { localPlugin } from "../helpers/local-plugin";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { Linter } from "eslint";
-import { rule } from "../../src/rules/use-numeric-separator";
 
 function lintWithOptions(options: unknown): Linter.LintMessage[] {
   const linter = new Linter();
-  const plugin = { rules: { "use-numeric-separator": rule } };
   return linter.verify("const x = 1;", {
-    plugins: { local: plugin },
+    plugins: { local: localPlugin },
     rules: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       "local/use-numeric-separator": ["error", options as any],
@@ -57,11 +56,10 @@ test("valid config produces no config errors on clean source", () => {
 
 test("legacy octal in sloppy-mode script is not reported or autofixed", () => {
   const linter = new Linter();
-  const plugin = { rules: { "use-numeric-separator": rule } };
   for (const code of ["var a = 01234567;", "var b = 08765432;"]) {
     const result = linter.verifyAndFix(code, {
       languageOptions: { sourceType: "script", ecmaVersion: 2022 },
-      plugins: { local: plugin },
+      plugins: { local: localPlugin },
       rules: { "local/use-numeric-separator": "error" },
     });
     assert.equal(result.output, code);
