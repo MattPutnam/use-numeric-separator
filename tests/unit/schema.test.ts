@@ -1,13 +1,12 @@
+import { localPlugin } from "../helpers/local-plugin";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { Linter } from "eslint";
-import { rule } from "../../src/rules/use-numeric-separator";
 
 function runWithOptions(options: unknown): Linter.LintMessage[] {
   const linter = new Linter();
-  const plugin = { rules: { "use-numeric-separator": rule } };
   return linter.verify("const x = 1;", {
-    plugins: { local: plugin },
+    plugins: { local: localPlugin },
     rules: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       "local/use-numeric-separator": ["error", options as any],

@@ -1,12 +1,11 @@
+import { localPlugin } from "../helpers/local-plugin";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { Linter } from "eslint";
-import { rule } from "../../src/rules/use-numeric-separator";
 
 const linter = new Linter();
-const plugin = { rules: { "use-numeric-separator": rule } };
 const lintConfig = {
-  plugins: { local: plugin },
+  plugins: { local: localPlugin },
   rules: { "local/use-numeric-separator": "error" },
 } as const;
 

@@ -1,3 +1,4 @@
+import { localPlugin } from "../helpers/local-plugin";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { Linter } from "eslint";
@@ -77,9 +78,8 @@ ruleTester.run("use-numeric-separator [hex+binary]", rule, {
 // FR-010 `n`-adjacency assertion (explicit substring check)
 test("hex BigInt fix never places separator adjacent to 'n'", () => {
   const linter = new Linter();
-  const plugin = { rules: { "use-numeric-separator": rule } };
   const result = linter.verifyAndFix("const x = 0xFFFFFFFFFFFFn;", {
-    plugins: { local: plugin },
+    plugins: { local: localPlugin },
     rules: { "local/use-numeric-separator": "error" },
   });
   assert.equal(result.output, "const x = 0xFFFF_FFFF_FFFFn;");
