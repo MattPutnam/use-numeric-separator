@@ -51,6 +51,9 @@ export const rule = createRule<RuleOptions, MessageIds>({
       Literal(node) {
         const parsed = parseLiteral(node);
         if (!parsed) return;
+        // Legacy octal (`0755`) and leading-zero decimals (`0855`) forbid
+        // numeric separators entirely; any autofix would be a SyntaxError.
+        if (parsed.base === "decimal" && /^0[0-9_]/.test(parsed.raw)) return;
         const opts = resolved[parsed.base];
         if (!opts.enabled) return;
         if (!anyRunAtThreshold(parsed, resolved)) return;

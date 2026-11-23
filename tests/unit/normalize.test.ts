@@ -71,3 +71,12 @@ test("normalize: cross-field check uses default for unprovided field", () => {
     TypeError,
   );
 });
+
+test("normalize: disabled base skips threshold/groupSize validation", () => {
+  const r = normalize(
+    { octal: { enabled: false, groupSize: 5 } },
+    DEFAULT_OPTIONS,
+  );
+  assert.equal(r.octal.enabled, false);
+  assert.equal(r.octal.groupSize, 5);
+});

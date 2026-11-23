@@ -11,7 +11,7 @@ const perBase = {
       type: "integer",
       minimum: 3,
       description:
-        "Digit count (integer part for decimal) at or above which separators are required.",
+        "Digit count at or above which separators are required. For decimal, applied independently to the integer, fractional, and exponent digit runs.",
     },
     groupSize: {
       type: "integer",
