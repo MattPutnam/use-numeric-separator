@@ -54,3 +54,17 @@ test("valid config produces no config errors on clean source", () => {
     assert.ok(!m.fatal, `unexpected fatal: ${m.message}`);
   }
 });
+
+test("legacy octal in sloppy-mode script is not reported or autofixed", () => {
+  const linter = new Linter();
+  const plugin = { rules: { "use-numeric-separator": rule } };
+  for (const code of ["var a = 01234567;", "var b = 08765432;"]) {
+    const result = linter.verifyAndFix(code, {
+      languageOptions: { sourceType: "script", ecmaVersion: 2022 },
+      plugins: { local: plugin },
+      rules: { "local/use-numeric-separator": "error" },
+    });
+    assert.equal(result.output, code);
+    assert.deepEqual(result.messages, []);
+  }
+});
