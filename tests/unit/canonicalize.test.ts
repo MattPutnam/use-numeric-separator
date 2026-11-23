@@ -12,7 +12,7 @@ function lit(raw: string, value: number | bigint): TSESTree.Literal {
 function roundTrip(raw: string, value: number | bigint): string {
   const p = parseLiteral(lit(raw, value));
   assert.ok(p);
-  return canonicalize(p, DEFAULT_OPTIONS);
+  return canonicalize(p, DEFAULT_OPTIONS[p.base]);
 }
 
 test("canonicalize: short decimal unchanged", () => {
@@ -85,7 +85,7 @@ test("canonicalize: is idempotent", () => {
     const first = roundTrip(raw, value);
     const p = parseLiteral(lit(first, value));
     assert.ok(p);
-    const second = canonicalize(p, DEFAULT_OPTIONS);
+    const second = canonicalize(p, DEFAULT_OPTIONS[p.base]);
     assert.equal(second, first);
   }
 });

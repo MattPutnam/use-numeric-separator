@@ -56,8 +56,8 @@ export const rule = createRule<RuleOptions, MessageIds>({
         if (parsed.base === "decimal" && /^0[0-9_]/.test(parsed.raw)) return;
         const opts = resolved[parsed.base];
         if (!opts.enabled) return;
-        if (!anyRunAtThreshold(parsed, resolved)) return;
-        const canonical = canonicalize(parsed, resolved);
+        if (!anyRunAtThreshold(parsed, opts)) return;
+        const canonical = canonicalize(parsed, opts);
         if (canonical === parsed.raw) return;
         context.report({
           node,
