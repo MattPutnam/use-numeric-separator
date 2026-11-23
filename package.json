@@ -3,6 +3,14 @@
   "version": "0.1.0",
   "description": "A typescript-eslint rule that enforces underscore numeric separators on long number literals (decimal, hex, binary, octal) with per-base configuration.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MattPutnam/use-numeric-separator.git"
+  },
+  "homepage": "https://github.com/MattPutnam/use-numeric-separator#readme",
+  "bugs": {
+    "url": "https://github.com/MattPutnam/use-numeric-separator/issues"
+  },
   "keywords": [
     "eslint",
     "eslint-plugin",
@@ -31,7 +39,7 @@
   },
   "peerDependencies": {
     "eslint": "^8.57.0 || ^9.0.0",
-    "typescript": ">=4.8.4 <6.0.0"
+    "typescript": ">=4.8.4 <6.1.0"
   },
   "peerDependenciesMeta": {
     "typescript": {
@@ -39,7 +47,7 @@
     }
   },
   "dependencies": {
-    "@typescript-eslint/utils": "^8.0.0"
+    "@typescript-eslint/utils": "^8.58.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

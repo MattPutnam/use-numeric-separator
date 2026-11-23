@@ -1,11 +1,10 @@
 import { groupDigits } from "./groupDigits";
-import type { ParsedLiteral, ResolvedOptions } from "./types";
+import type { ParsedLiteral, PerBaseOptions } from "./types";
 
 export function canonicalize(
   parsed: ParsedLiteral,
-  resolved: ResolvedOptions,
+  opts: PerBaseOptions,
 ): string {
-  const opts = resolved[parsed.base];
   const grouped = parsed.digitRuns.map((run) =>
     run.length >= opts.threshold ? groupDigits(run, opts.groupSize) : run,
   );
@@ -22,8 +21,7 @@ export function canonicalize(
 
 export function anyRunAtThreshold(
   parsed: ParsedLiteral,
-  resolved: ResolvedOptions,
+  opts: PerBaseOptions,
 ): boolean {
-  const opts = resolved[parsed.base];
   return parsed.digitRuns.some((run) => run.length >= opts.threshold);
 }

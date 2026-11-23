@@ -21,12 +21,16 @@ For decimal literals with a fractional part or exponent, each digit run (integer
 ## Installation
 
 ```bash
-npm install --save-dev use-numeric-separator eslint @typescript-eslint/parser
+npm install --save-dev use-numeric-separator eslint
 ```
+
+To lint TypeScript files, also install `@typescript-eslint/parser` and `typescript`. The rule itself works on plain JavaScript with ESLint's default parser.
+
+Requirements: Node.js `>=18.18`, ESLint `^8.57` or `^9`, and (when used) TypeScript `>=4.8.4 <6.1`.
 
 ## Usage
 
-### Flat config (ESLint 9)
+### Flat config (`eslint.config.*`)
 
 ```js
 // eslint.config.mjs
@@ -45,16 +49,20 @@ export default [
 ];
 ```
 
-### Legacy config (ESLint 8, `.eslintrc.*`)
+Or use the bundled recommended config, which registers the plugin and enables the rule at `"error"`:
 
-```json
-{
-  "plugins": ["use-numeric-separator"],
-  "parser": "@typescript-eslint/parser",
-  "rules": {
-    "use-numeric-separator/use-numeric-separator": "error"
-  }
-}
+```js
+// eslint.config.mjs
+import useNumericSeparator from "use-numeric-separator";
+import tsParser from "@typescript-eslint/parser";
+
+export default [
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    languageOptions: { parser: tsParser },
+    ...useNumericSeparator.configs.recommended,
+  },
+];
 ```
 
 With no options, the rule enables all four bases at a digit threshold of 6, grouping by 3 for decimal/octal and by 4 for hex/binary.
@@ -71,10 +79,13 @@ The rule accepts an options object with four independent per-base entries (`deci
 
 Omitted bases inherit full defaults. Omitted fields within a supplied base entry inherit individual defaults.
 
+**What counts as a digit:** the base prefix (`0x`, `0b`, `0o`), existing underscores, and the BigInt `n` suffix are not counted. For decimal literals, `threshold` is applied to each digit run separately: `0.1234567` is reported because its 7-digit fractional part meets the default threshold, even though its integer part is a single digit. Every run is grouped from the right, including the fractional part (`1.1234567` → `1.1_234_567`).
+
 ### Example: per-base configuration
 
 ```js
-{
+// in eslint.config.mjs, inside a config object's `rules`
+rules: {
   "use-numeric-separator/use-numeric-separator": ["error", {
     // Disable enforcement on hex literals (e.g. preserve a team bitfield style)
     hex: { enabled: false },
@@ -92,20 +103,34 @@ Omitted bases inherit full defaults. Omitted fields within a supplied base entry
 
 ### Invalid configurations
 
-The rule validates options at ESLint config-load time. The following fail fast with a clear error and prevent the rule from running:
+The rule validates options when ESLint loads it. The following fail with an error naming the problem, and the lint run stops:
 
 - `groupSize < 2`.
 - `threshold < 3`.
-- `threshold < groupSize + 1` (no interior position for a separator to appear).
+- `threshold < groupSize + 1` (no interior position for a separator to appear). This check is skipped for a base with `enabled: false`, since its settings are never used.
 - Unknown per-base fields or unknown base keys.
 - Wrong types (e.g. a string where a number is expected).
+- More than one options object.
+
+### TypeScript config typing
+
+The options type is exported for typed configs:
+
+```ts
+import type { UseNumericSeparatorOptions } from "use-numeric-separator";
+
+const options: UseNumericSeparatorOptions = { hex: { groupSize: 2 } };
+```
 
 ## Rule behavior
 
-- **Autofix (`--fix`)**: violating literals are rewritten automatically. The fix is provably value-preserving — numeric value, base, BigInt-ness, fractional precision, and exponent are unchanged.
+- **Autofix (`--fix`)**: violating literals are rewritten automatically. The fix only adds, removes, or moves underscores, so numeric value, base, prefix casing, BigInt-ness, fractional precision, and exponent are unchanged.
 - **One violation per literal**: a decimal like `1234567.1234567e1234567` reports once, and its autofix rewrites all three too-long runs in a single edit.
-- **`messageId`s**: `missingNumericSeparatorDecimal`, `missingNumericSeparatorHex`, `missingNumericSeparatorBinary`, `missingNumericSeparatorOctal` — stable across patch releases; use these for directive-comment suppressions and tooling.
+- **Wrong grouping is reported too**: `1_00_000_0` is reported and normalized to `1_000_000`. Literals below the threshold are never reported, however they are separated.
+- **Messages**: for example, `Decimal literal '1000000' should use numeric separators: '1_000_000'.`
+- **`messageId`s**: `missingNumericSeparatorDecimal`, `missingNumericSeparatorHex`, `missingNumericSeparatorBinary`, `missingNumericSeparatorOctal` — stable across patch releases; use these in `RuleTester` tests and tooling. To suppress a report, use the rule name: `// eslint-disable-next-line use-numeric-separator/use-numeric-separator`.
 - **BigInt literals**: the `n` suffix is preserved and never has a separator placed immediately before it.
+- **Legacy leading-zero literals** (`0755`, `0855`, valid only in sloppy-mode JavaScript) are never reported, because numeric separators are a syntax error in them.
 - **Idempotent**: running autofix on already-correctly-grouped source produces zero edits.
 
 ## License
